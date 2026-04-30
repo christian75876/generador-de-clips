@@ -1,0 +1,4 @@
+pip freeze > requirements.txt
+git add requirements.txt setup.bat run.bat
+git commit -m "Add Windows setup and launcher scripts"
+git push
