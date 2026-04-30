@@ -3,8 +3,7 @@ import json
 import sys
 from faster_whisper import WhisperModel
 
-MODEL_SIZE = "tiny"  # tiny, base, small, medium, large-v3
-LANGUAGE = "es"
+from config import load_config
 
 def main():
     if len(sys.argv) < 3:
@@ -22,20 +21,23 @@ def main():
 
     output_file = output_dir / "transcript.json"
 
+    config = load_config()
+    whisper_config = config["whisper"]
+
     print(f"Transcribiendo: {video_path}")
     print(f"Output: {output_file}")
 
     model = WhisperModel(
-        MODEL_SIZE,
-        device="cpu",
-        compute_type="int8"
+        whisper_config["model_size"],
+        device=whisper_config["device"],
+        compute_type=whisper_config["compute_type"]
     )
 
     segments, info = model.transcribe(
         str(video_path),
-        language=LANGUAGE,
-        vad_filter=True,
-        beam_size=5
+        language=whisper_config["language"],
+        vad_filter=whisper_config["vad_filter"],
+        beam_size=whisper_config["beam_size"]
     )
 
     transcript = []

@@ -1,0 +1,46 @@
+{
+  "whisper": {
+    "model_size": "tiny",
+    "language": "es",
+    "device": "cpu",
+    "compute_type": "int8",
+    "beam_size": 5,
+    "vad_filter": true
+  },
+  "clips": {
+    "min_duration": 8,
+    "max_duration": 20,
+    "ideal_duration": 35,
+    "max_clips": 8,
+    "padding_start": 0,
+    "padding_end": 0,
+    "min_score": 5
+  },
+  "audio": {
+    "enabled": true,
+    "sample_rate": 16000,
+    "window_seconds": 0.5,
+    "min_rms_db": -32,
+    "min_peak_db": -8,
+    "relative_rms_db": 6,
+    "strong_relative_db": 3,
+    "merge_gap": 1,
+    "min_segment_duration": 0.5,
+    "silence_before_seconds": 2,
+    "silence_before_db": 5,
+    "reaction_max_duration": 4,
+    "max_peaks": 80,
+    "nearby_seconds": 2,
+    "score_bonus": 3,
+    "max_score_bonus": 8,
+    "natural_boundaries": true,
+    "boundary_search_seconds": 4,
+    "boundary_silence_db": -38,
+    "boundary_quiet_offset_db": -4,
+    "boundary_change_db": 6,
+    "boundary_padding_start": 0.25,
+    "boundary_padding_end": 0.35,
+    "boundary_alignment_seconds": 4,
+    "max_boundary_shift": 5
+  }
+}

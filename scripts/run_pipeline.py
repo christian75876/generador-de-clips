@@ -3,6 +3,8 @@ import subprocess
 import sys
 import re
 
+from config import load_config
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 def slugify(name: str) -> str:
@@ -37,6 +39,8 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     python = sys.executable
+    config = load_config()
+    audio_config = config.get("audio", {})
 
     run_step([
         python,
@@ -44,6 +48,14 @@ def main():
         str(video_path),
         str(output_dir)
     ])
+
+    if audio_config.get("enabled", True):
+        run_step([
+            python,
+            "scripts/analyze_audio.py",
+            str(video_path),
+            str(output_dir)
+        ])
 
     run_step([
         python,
