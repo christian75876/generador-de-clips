@@ -11,7 +11,7 @@
     "min_duration": 8,
     "max_duration": 20,
     "ideal_duration": 35,
-    "max_clips": 8,
+    "max_clips": 5,
     "padding_start": 0,
     "padding_end": 0,
     "min_score": 5
