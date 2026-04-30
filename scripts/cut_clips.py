@@ -1,12 +1,7 @@
 from pathlib import Path
 import json
 import subprocess
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-VIDEO_PATH = BASE_DIR / "input" / "streams" / "video.mp4"
-CANDIDATES_PATH = BASE_DIR / "output" / "candidates" / "video_candidates.json"
-OUTPUT_DIR = BASE_DIR / "output" / "raw_clips"
+import sys
 
 PADDING_START = 0
 PADDING_END = 0
@@ -17,15 +12,26 @@ def run_command(command):
     subprocess.run(command, check=True)
 
 def main():
-    if not VIDEO_PATH.exists():
-        raise FileNotFoundError(f"No existe el video: {VIDEO_PATH}")
+    if len(sys.argv) < 3:
+        print("Uso:")
+        print("python scripts/cut_clips.py <video_path> <output_dir>")
+        sys.exit(1)
 
-    if not CANDIDATES_PATH.exists():
-        raise FileNotFoundError(f"No existe candidates: {CANDIDATES_PATH}")
+    video_path = Path(sys.argv[1])
+    output_dir = Path(sys.argv[2])
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    candidates_path = output_dir / "candidates.json"
+    clips_dir = output_dir / "raw_clips"
 
-    with open(CANDIDATES_PATH, "r", encoding="utf-8") as f:
+    if not video_path.exists():
+        raise FileNotFoundError(f"No existe el video: {video_path}")
+
+    if not candidates_path.exists():
+        raise FileNotFoundError(f"No existe candidates: {candidates_path}")
+
+    clips_dir.mkdir(parents=True, exist_ok=True)
+
+    with open(candidates_path, "r", encoding="utf-8") as f:
         candidates = json.load(f)
 
     candidates = sorted(candidates, key=lambda x: x["score"], reverse=True)[:MAX_CLIPS]
@@ -35,13 +41,13 @@ def main():
         end = float(clip["end"]) + PADDING_END
         duration = end - start
 
-        output_file = OUTPUT_DIR / f"clip_{index:03d}_score_{clip['score']}.mp4"
+        output_file = clips_dir / f"clip_{index:03d}_score_{clip['score']}.mp4"
 
         command = [
             "ffmpeg",
             "-y",
             "-ss", str(start),
-            "-i", str(VIDEO_PATH),
+            "-i", str(video_path),
             "-t", str(duration),
             "-c:v", "libx264",
             "-c:a", "aac",
@@ -52,10 +58,11 @@ def main():
 
         print(f"\nCortando clip {index}: {output_file.name}")
         print(f"Inicio: {start}s | Duración: {duration}s")
+
         run_command(command)
 
     print("\nClips generados en:")
-    print(OUTPUT_DIR)
+    print(clips_dir)
 
 if __name__ == "__main__":
     main()
